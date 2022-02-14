@@ -1,0 +1,33 @@
+---
+
+- name: Install Apache2
+  apt:
+    name: apache2
+    state: latest 
+
+- name: Create virtual hosts directory if that does not exists
+  ansible.builtin.file:
+    path: "/var/www/{{ item.servername }}"
+    state: directory
+    mode: '0755'
+  loop: "{{ domain_names }}"
+
+- name: Create virtual host files
+  ansible.builtin.template:
+    src: virtual_host.conf.j2
+    dest: "/etc/apache2/sites-available/{{ item.servername }}.conf"
+    owner: root
+    group: root
+  loop: "{{ domain_names }}"
+
+- name: Enable "{{ item.servername }}.conf"
+  command: sudo a2ensite "{{ item.servername }}.conf"
+  #notify:
+  #- restart apache2
+  loop: "{{ domain_names }}"
+
+
+- name: Disable the default site defined in 000-default.conf
+  command: sudo a2dissite 000-default.conf
+  notify:
+  - restart apache2

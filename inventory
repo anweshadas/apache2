@@ -1,0 +1,7 @@
+[apache]
+192.168.122.53
+
+[apache:vars]
+ansible_user=anwesha
+# become root password provided with -K
+ansible_become=true

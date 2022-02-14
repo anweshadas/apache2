@@ -1,0 +1,34 @@
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    ServerName "{{ item.servername }}"
+    ServerAlias "www.{{ item.servername }}"
+    DocumentRoot "/var/www/{{ item.servername }}"
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    LogFormat "%v:%p 1.1.1.1 %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" vhost_anonymus
+    CustomLog ${APACHE_LOG_DIR}/access.log vhost_anonymus
+</VirtualHost>
+
+{% if enable_https %}
+
+<VirtualHost *:443>
+    ServerAdmin webmaster@localhost
+    ServerName "{{ item.servername }}"
+
+    SSLEngine on
+    SSLCipherSuite AES256+EECDH:AES256+EDH
+    SSLProtocol All -SSLv2 -SSLv3
+    SSLHonorCipherOrder On
+    SSLCompression off
+    SSLCertificateFile "/etc/letsencrypt/live/{{ item.servername }}/cert.pem"
+    SSLCertificateKeyFile "/etc/letsencrypt/live/{{ item.servername }}/privkey.pem"
+    SSLCertificateChainFile "/etc/letsencrypt/live/{{ item.servername }}/chain.pem"
+
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    LogFormat "%v:%p 1.1.1.1 %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" vhost_anonymus
+    CustomLog ${APACHE_LOG_DIR}/access.log vhost_anonymus
+    "{{ item.extra_apache_parameters }}"
+</VirtualHost>
+
+{% endif %}
+

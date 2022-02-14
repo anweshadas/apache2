@@ -1,0 +1,49 @@
+---
+
+domain_names: 
+  - servername: kolkata.anweshadas.in
+    extra_apache_parameters: |
+      ProxyVia On
+      ProxyRequests Off
+      ProxyPreserveHost On
+      <Location />
+        ProxyPass http://localhost:9001/ retry=0 timeout=30
+        ProxyPassReverse http://localhost:9001/
+      </Location>
+      <Location /socket.io>
+        RewriteEngine On
+        RewriteCond %{QUERY_STRING} transport=websocket    [NC]
+        RewriteRule /(.*) ws://localhost:9001/socket.io/$1 [P,L]
+        ProxyPass http://localhost:9001/socket.io retry=0 timeout=30
+        ProxyPassReverse http://localhost:9001/socket.io
+      </Location>
+      <Proxy *>
+        Options FollowSymLinks MultiViews
+        AllowOverride All
+        Order allow,deny
+        allow from all
+      </Proxy>
+
+  - servername: sweden.anweshadas.se
+    extra_apache_parameters: |
+      ProxyVia On
+      ProxyRequests Off
+      ProxyPreserveHost On
+      <Location />
+        ProxyPass http://localhost:9001/ retry=0 timeout=30
+        ProxyPassReverse http://localhost:9001/
+      </Location>
+      <Location /socket.io>
+        RewriteEngine On
+        RewriteCond %{QUERY_STRING} transport=websocket    [NC]
+        RewriteRule /(.*) ws://localhost:9001/socket.io/$1 [P,L]
+        ProxyPass http://localhost:9001/socket.io retry=0 timeout=30
+        ProxyPassReverse http://localhost:9001/socket.io
+      </Location>
+      <Proxy *>
+        Options FollowSymLinks MultiViews
+        AllowOverride All
+        Order allow,deny
+        allow from all
+      </Proxy>
+

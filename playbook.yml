@@ -1,0 +1,12 @@
+---
+- name: Setting up webserver
+
+  hosts: apache
+  gather_facts: True
+  vars_files:
+    - vars/domains.yml
+  vars:
+    - enable_https: False
+
+  roles: 
+    - apache2
