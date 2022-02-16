@@ -5,6 +5,14 @@
     name: apache2
     state: latest 
 
+- name: Custom LogFormat definition for IP sanitization 
+  blockinfile:
+    path: /etc/apache2/apache2.conf
+    block: |
+      LogFormat "%v:%p 192.168.1.4 %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" ipv4_log
+      LogFormat "%v:%p fd00::6 %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" ipv6_log
+      LogFormat "%v:%p 127.0.0.42 %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" onion_log
+
 - name: Create virtual hosts directory if that does not exists
   ansible.builtin.file:
     path: "/var/www/{{ item.servername }}"

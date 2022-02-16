@@ -4,8 +4,7 @@
     ServerAlias "www.{{ item.servername }}"
     DocumentRoot "/var/www/{{ item.servername }}"
     ErrorLog ${APACHE_LOG_DIR}/error.log
-    LogFormat "%v:%p 1.1.1.1 %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" vhost_anonymus
-    CustomLog ${APACHE_LOG_DIR}/access.log vhost_anonymus
+    CustomLog ${APACHE_LOG_DIR}/access.log ipv4_log
 </VirtualHost>
 
 {% if enable_https %}
@@ -25,10 +24,21 @@
 
 
     ErrorLog ${APACHE_LOG_DIR}/error.log
-    LogFormat "%v:%p 1.1.1.1 %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" vhost_anonymus
-    CustomLog ${APACHE_LOG_DIR}/access.log vhost_anonymus
+    CustomLog ${APACHE_LOG_DIR}/access.log ipv4_log
     "{{ item.extra_apache_parameters }}"
 </VirtualHost>
 
 {% endif %}
 
+{% if enable_onion %}
+
+<VirtualHost 127.0.0.1:80>
+    ServerAdmin webmaster@localhost
+    ServerName "{{ item.servername }}"
+    ServerAlias "www.{{ item.servername }}"
+    DocumentRoot "/var/www/{{ item.servername }}"
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log onion_logS
+</VirtualHost>
+
+{% endif %}
