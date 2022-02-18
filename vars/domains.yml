@@ -23,6 +23,7 @@ domain_names:
         Order allow,deny
         allow from all
       </Proxy>
+    redirect_url: https://anweshadas.in
 
   - servername: sweden.anweshadas.se
     extra_apache_parameters: |

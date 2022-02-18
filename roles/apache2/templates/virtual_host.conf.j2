@@ -3,6 +3,9 @@
     ServerAdmin webmaster@localhost
     ServerName "{{ item.servername }}"
     ServerAlias "www.{{ item.servername }}"
+    {% if {{ item.redirect_url }} is defined %}
+    Redirect permanent / {{ item.redirect_url }}
+    {% endif %}
     DocumentRoot "/var/www/{{ item.servername }}"
     ErrorLog ${APACHE_LOG_DIR}/error.log
     CustomLog ${APACHE_LOG_DIR}/access.log ipv4_log
@@ -38,6 +41,9 @@
     ServerAdmin webmaster@localhost
     ServerName "{{ item.servername }}"
     ServerAlias "www.{{ item.servername }}"
+    {% if {{ item.redirect_url }} is defined %}
+    Redirect permanent / {{ item.redirect_url }}
+    {% endif %}
     DocumentRoot "/var/www/{{ item.servername }}"
     ErrorLog ${APACHE_LOG_DIR}/error.log
     CustomLog ${APACHE_LOG_DIR}/access.log ipv6_log
