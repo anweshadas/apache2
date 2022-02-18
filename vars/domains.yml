@@ -46,4 +46,6 @@ domain_names:
         Order allow,deny
         allow from all
       </Proxy>
+    onion_address: k7z4yhvckzi7gm7ppqjsnau5e5ycfxvg6rhhseqtmi73l44kamvlgbad.onion
+    
 

@@ -1,4 +1,5 @@
-<VirtualHost *:80>
+{% for ipv4 in ansible_facts.all_ipv4_addresses %}
+<VirtualHost {{ ipv4 }}:80>
     ServerAdmin webmaster@localhost
     ServerName "{{ item.servername }}"
     ServerAlias "www.{{ item.servername }}"
@@ -9,7 +10,7 @@
 
 {% if enable_https %}
 
-<VirtualHost *:443>
+<VirtualHost {{ ipv4 }}:443>
     ServerAdmin webmaster@localhost
     ServerName "{{ item.servername }}"
 
@@ -29,16 +30,51 @@
 </VirtualHost>
 
 {% endif %}
+{% endfor %}
 
-{% if enable_onion %}
 
-<VirtualHost 127.0.0.1:80>
+{% for ipv6 in ansible_facts.all_ipv6_addresses %}
+<VirtualHost {{ ipv6 }}:80>
     ServerAdmin webmaster@localhost
     ServerName "{{ item.servername }}"
     ServerAlias "www.{{ item.servername }}"
     DocumentRoot "/var/www/{{ item.servername }}"
     ErrorLog ${APACHE_LOG_DIR}/error.log
-    CustomLog ${APACHE_LOG_DIR}/access.log onion_logS
+    CustomLog ${APACHE_LOG_DIR}/access.log ipv6_log
+</VirtualHost>
+
+{% if enable_https %}
+
+<VirtualHost {{ ipv6 }}:443>
+    ServerAdmin webmaster@localhost
+    ServerName "{{ item.servername }}"
+
+    SSLEngine on
+    SSLCipherSuite AES256+EECDH:AES256+EDH
+    SSLProtocol All -SSLv2 -SSLv3
+    SSLHonorCipherOrder On
+    SSLCompression off
+    SSLCertificateFile "/etc/letsencrypt/live/{{ item.servername }}/cert.pem"
+    SSLCertificateKeyFile "/etc/letsencrypt/live/{{ item.servername }}/privkey.pem"
+    SSLCertificateChainFile "/etc/letsencrypt/live/{{ item.servername }}/chain.pem"
+
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log ipv6_log
+    "{{ item.extra_apache_parameters }}"
+</VirtualHost>
+
+{% endif %}
+{% endfor %}
+
+{% if item.onion_address is defined %}
+
+<VirtualHost 127.0.0.1:80>
+    ServerAdmin webmaster@localhost
+    ServerName "{{ item.onion_address }}"
+    DocumentRoot "/var/www/{{ item.servername }}"
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log onion_log
 </VirtualHost>
 
 {% endif %}
